@@ -2,8 +2,8 @@
   <div id="app">
       <select v-model="selected" v-if="isGameStarted === false">
         <option value="" >choose your color</option>
-        <option value='true'>red</option>
-        <option value='false'>blue</option>
+        <option value='red'>red</option>
+        <option value='yellow'>yellow</option>
       </select>
       <button @click="startGame" v-if="isGameStarted === false">start game</button>
       <div class="game__square" v-if="!this.isWon">
@@ -57,11 +57,24 @@ export default {
       // }
       // return  item.name === 'X' ? { background: 'red' } : { background: 'yellow' }
       console.log(this.selected)
-      if (this.count % 2 === 0) {
-        return ((item.name === 'X' && this.selected) ? { background: 'red' } : { background: 'yellow' })
+      if (this.count % 2 === 0) 
+      // ходимо перші
+      {
+        if(this.selected === 'red') {
+          return (item.name === 'X' ? { background: 'red' } : { background: 'yellow' })
+        }
+        if(this.selected === 'yellow') {
+          return (item.name === 'X' ? { background: 'yellow' } : { background: 'red' })
+        }
       }
-       if (this.count % 2 !== 0) {
-        return ((item.name === 'O' && !this.selected) ? { background: 'red' } : { background: 'yellow' })
+       if (this.count % 2 !== 0) // ходимо другі
+       {
+        if(this.selected === 'red') {
+            return (item.name === 'O' ? { background: 'red' } : { background: 'yellow' })
+          }
+        if(this.selected === 'yellow') {
+            return (item.name === 'O' ? { background: 'yellow' } : { background: 'red' })
+          }
       }
     },
     startGame() {
