@@ -1,15 +1,35 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <div name="0" v-on:click="greet" class="game__cell">{{ squares[0] }}</div>
+      <div name="1" v-on:click="greet" class="game__cell">{{ squares[1] }}</div>
+      <div name="2" v-on:click="greet" class="game__cell">{{ squares[2] }}</div>
+      <div name="3" v-on:click="greet" class="game__cell">{{ squares[3] }}</div>
+      <div name="4" v-on:click="greet" class="game__cell">{{ squares[4] }}</div>
+      <div name="5" v-on:click="greet" class="game__cell">{{ squares[5] }}</div>
+      <div name="6" v-on:click="greet" class="game__cell">{{ squares[6] }}</div>
+      <div name="7" v-on:click="greet" class="game__cell">{{ squares[7] }}</div>
+      <div name="8" v-on:click="greet" class="game__cell">{{ squares[8] }}</div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      counter: 0,
+      squares: new Array(9).fill(1),
+      count: Math.floor(Math.random() * (2)),
+    }
+  },
+  methods: {
+    greet(event) {
+      let numberOfCell = event.target.getAttribute('name')
+      this.squares[numberOfCell] = (this.count % 2 === 0) ? 'X' : 'O';
+      this.count= this.count + 1;
+      console.log(this.squares)
+    }
   }
 }
 </script>
