@@ -10,14 +10,14 @@
         <div
           v-on:click="() => onClick(item)"
           class="game__cell"
-          v-for="item in this.arr"
+          v-for="item in this.board"
           :key="item.i"
           v-bind:style="style(item)"
         >{{ item.name }}</div>
       </div>
       <h1 v-if="this.winner && !this.isDrow">player {{winner}} won!</h1>
       <h1 v-if="this.isDrow && !this.winner"> DROW </h1>
-      <button @click="reloadPage">reload game</button>
+      <button class="reload__button" @click="reloadPage">reload game</button>
   </div>
 </template>
 
@@ -32,7 +32,7 @@ export default {
       selected: '',
       playerMove: rand,
       firstMoveChance: rand,
-      arr:   
+      board:   
       [
         {name:null,i:0},
         {name:null,i:1},
@@ -68,7 +68,7 @@ export default {
       }
       this.isGameStarted = true;
       if(this.firstMoveChance === 1) {
-        this.arr[Math.floor(Math.random() *8)].name = 'X'
+        this.board[Math.floor(Math.random() *8)].name = 'X'
       }
     },
     onClick(item) {
@@ -87,8 +87,8 @@ export default {
         this.playerMove++
         this.winCheck()
         if (!this.winner) {
-          const randomSortedArray = this.arr.filter(item => !item.name)[Math.floor(Math.random() * this.arr.filter(element=>!element.name).length)] 
-          this.arr[randomSortedArray.i].name = (this.playerMove % 2 === 0) ? 'X' : 'O';
+          const randomSortedboarday = this.board.filter(item => !item.name)[Math.floor(Math.random() * this.board.filter(element=>!element.name).length)] 
+          this.board[randomSortedboarday.i].name = (this.playerMove % 2 === 0) ? 'X' : 'O';
           this.playerMove++
           if(this.selected)
           this.winCheck()
@@ -108,14 +108,14 @@ export default {
       for (let i = 0; i < winningСombination.length; i++) {
         const [a, b, c] = winningСombination[i];
 
-        const isWin = this.arr[a].name === this.arr[b].name && this.arr[a].name === this.arr[c].name;
+        const isWin = this.board[a].name === this.board[b].name && this.board[a].name === this.board[c].name;
 
-        if (this.arr[a].name && isWin) {
-          this.winner = this.arr[a].name;
+        if (this.board[a].name && isWin) {
+          this.winner = this.board[a].name;
           return;
         }
       }
-      if (this.arr.every(player => player.name)) {
+      if (this.board.every(player => player.name)) {
         this.isDrow = true;
         return;
       }
@@ -123,13 +123,6 @@ export default {
     reloadPage() {
       window.location.reload();
     },
-    firstMove () {
-      if(this.f % 2 !== 0) {
-        const randomSortedArray = this.arr.filter(item => !item.name)[Math.floor(Math.random() * this.arr.filter(element=>!element.name).length)] 
-        this.arr[randomSortedArray.i].name = (this.rand % 2 === 0) ? 'O' : 'X';
-        this.f++
-      }
-    }
   }
 }
 
@@ -171,6 +164,9 @@ export default {
   position: absolute;
   top: 90px;
   box-sizing: border-box;
+  width: 140px;
+}
+.reload__button {
   width: 140px;
 }
 .red{
