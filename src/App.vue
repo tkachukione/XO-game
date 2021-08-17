@@ -6,7 +6,7 @@
         <option value='yellow'>yellow</option>
       </select>
       <button @click="startGame" v-if="isGameStarted === false">start game</button>
-      <div class="game__square" v-if="!this.isWon">
+      <div class="game__square">
         <div
           v-on:click="() => greet(item)"
           class="game__cell"
@@ -16,7 +16,8 @@
         >{{ item.name }}</div>
         
       </div>
-      <h1 v-if="this.isWon">YOU WIN</h1>
+      <h1 v-if="this.isWon && !this.isDrow">player {{winner}} won!</h1>
+      <h1 v-if="this.isDrow"> DROW </h1>
       <button @click="reloadPage">reload game</button>
        
   </div>
@@ -30,12 +31,12 @@ export default {
     return {
       isGameStarted: false,
       selected: '',
-      counter: 0,
-      count: Math.floor(Math.random() * (2)),
+      count: 1,
       arr:   [{name:null,i:0},{name:null,i:1},{name:null,i:2},{name:null,i:3},{name:null,i:4},{name:null,i:5},{name:null,i:6},{name:null,i:7},{name:null,i:8}],
       pleyer: Boolean(this.count),
-      isWon: false
-      
+      isWon: false,
+      winner: '',
+      isDrow: false
     }
   },
   methods: {
@@ -43,19 +44,6 @@ export default {
       if (!item.name) {
         return '';
       }
-      // if (this.selected) {
-      //   return this.count % 2 === 0 ? { background: 'red' } : { background: 'yellow' }
-      // } 
-      // if (!this.selected) {
-      //   return this.count % 2 === 0 ? { background: 'yellow' } : { background: 'red' }
-      // }
-      // if (this.selected && item.name === 'O') {
-      //   return { background: 'red' }
-      // }
-      // else {
-      //   return { background: 'yellow' }
-      // }
-      // return  item.name === 'X' ? { background: 'red' } : { background: 'yellow' }
       console.log(this.selected)
       if (this.count % 2 === 0) 
       // ходимо перші
@@ -106,7 +94,7 @@ export default {
         this.arr[r.i].name = (this.count % 2 === 0) ? 'X' : 'O';
         this.count++
         if(this.selected)
-        this.winner()
+        this.winCheck()
 
       // if(this.count % 2 !== 0) {
       //   console.log(this.player)
@@ -121,12 +109,46 @@ export default {
       // }
 
     },
-    winner() {
-      if (this.arr[0].name && this.arr[1].name && this.arr[2].name || this.arr[3].name && this.arr[4].name && this.arr[5].name) {
-          this.isWon = true
-          // window.location.reload();
-          // alert('player win')
+    winCheck() {
+      // if (this.arr[0].name && this.arr[1].name && this.arr[2].name || this.arr[3].name && this.arr[4].name && this.arr[5].name) {
+      //     this.isWon = true
+      //     // window.location.reload();
+      //     // alert('player win')
+      // }
+
+      // if (this.arr.slice(0, 3).every(win => win.name === 'X') || this.arr.slice(3, 6).every(win => win.name === 'X') || this.arr.slice(6, 9).every(win => win.name === 'X') 
+      // || this.arr[0].name === 'X' && this.arr[3].name === 'X' && this.arr[6].name === 'X' || this.arr[1].name === 'X' && this.arr[4].name === 'X' && this.arr[7].name === 'X' || this.arr[2].name === 'X' && this.arr[5].name === 'X' && this.arr[8].name === 'X' 
+      // || this.arr[0].name === 'X' && this.arr[4].name === 'X' && this.arr[8].name === 'X' || this.arr[2].name === 'X' && this.arr[4].name === 'X' && this.arr[6].name === 'X') {
+      //   this.isWon = true;
+      //   this.winner = 'X';
+      // }
+      // if (this.arr.slice(0, 3).every(win => win.name === 'O') || this.arr.slice(3, 6).every(win => win.name === 'O') || this.arr.slice(6, 9).every(win => win.name === 'O') 
+      // || this.arr[0].name === 'O' && this.arr[3].name === 'O' && this.arr[6].name === 'O' || this.arr[1].name === 'O' && this.arr[4].name === 'O' && this.arr[7].name === 'O' || this.arr[2].name === 'O' && this.arr[5].name === 'O' && this.arr[8].name === 'O' 
+      // || this.arr[0].name === 'O' && this.arr[4].name === 'O' && this.arr[8].name === 'O' || this.arr[2].name === 'O' && this.arr[4].name === 'O' && this.arr[6].name === 'O') {
+      //   this.isWon = true;
+      //   this.winner = 'O';
+      // }
+    
+    const winningСombination = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    
+    for (let i = 0; i < winningСombination.length; i++) {
+      const [a, b, c] = winningСombination[i];
+      if (this.arr[a].name && this.arr[a].name === this.arr[b].name && this.arr[a].name === this.arr[c].name) {
+        this.winner = this.arr[a].name;
+        this.isWon = true;
+      } else if (this.arr.every(player => player.name)){
+        this.isDrow = true
       }
+    }
     },
     reloadPage() {
       window.location.reload();
@@ -157,6 +179,10 @@ export default {
   width: 300px;
   border: 1px solid black;
   margin: 50px auto;
+  font-size: 110px;
+  text-align: center;
+  line-height: 100px;
+  font-family: 'Indie Flower', sans-serif;
 }
 .red{
   background: red;
