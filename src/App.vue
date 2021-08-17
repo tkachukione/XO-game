@@ -45,6 +45,7 @@ export default {
         {name:null,i:8}
       ],
       winner: '',
+      isDrow: false
     }
   },
   methods: {
