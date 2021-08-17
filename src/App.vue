@@ -136,13 +136,12 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 160px;
-  /* position: relative; */
 }
 .game__square {
   height: 300px;
   width: 300px;
   border: 1px solid black;
-  margin: 100px auto;
+  margin: 100px auto 0;
   font-size: 110px;
   text-align: center;
   line-height: 100px;
@@ -167,7 +166,11 @@ export default {
   width: 140px;
 }
 .reload__button {
+  position: absolute;
+  top: 550px;
+  box-sizing: border-box;
   width: 140px;
+  left: calc(50% - 70px);
 }
 .red{
   background: red;
