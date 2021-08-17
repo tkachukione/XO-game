@@ -1,5 +1,5 @@
 # DEMO LINK
-## [DEMO LINK]('https://tkachukione.github.io/XO-game/')
+## [DEMO LINK](https://tkachukione.github.io/XO-game/)
 
 ## Project setup
 ```
