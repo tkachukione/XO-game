@@ -1,4 +1,4 @@
-https://tkachukione.github.io/XO-game/
+# https://tkachukione.github.io/XO-game/
 
 # game
 
