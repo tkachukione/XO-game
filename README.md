@@ -1,3 +1,5 @@
+https://tkachukione.github.io/XO-game/
+
 # game
 
 ## Project setup
