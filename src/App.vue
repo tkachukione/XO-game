@@ -12,7 +12,7 @@
           class="game__cell"
           v-for="item in this.board"
           :key="item.i"
-          v-bind:style="style(item)"
+          :style="style(item)"
         >{{ item.name }}</div>
       </div>
       <h1 v-if="this.winner && !this.isDrow">player {{winner}} won!</h1>
@@ -45,7 +45,6 @@ export default {
         {name:null,i:8}
       ],
       winner: '',
-      isDrow: false
     }
   },
   methods: {
@@ -106,12 +105,12 @@ export default {
         [2, 4, 6],
       ];
       for (let i = 0; i < winningСombination.length; i++) {
-        const [a, b, c] = winningСombination[i];
+        const [x, y, z] = winningСombination[i];
 
-        const isWin = this.board[a].name === this.board[b].name && this.board[a].name === this.board[c].name;
+        const isWon = this.board[x].name === this.board[y].name && this.board[x].name === this.board[z].name;
 
-        if (this.board[a].name && isWin) {
-          this.winner = this.board[a].name;
+        if (this.board[x].name && isWon) {
+          this.winner = this.board[x].name;
           return;
         }
       }
