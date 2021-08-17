@@ -1,25 +1,23 @@
 <template>
-  <div id="app">
-      <select v-model="selected" v-if="isGameStarted === false">
+  <div id="app" class="app">
+      <select class="select" v-model="selected" v-if="!isGameStarted">
         <option value="" >choose your color</option>
         <option value='red'>red</option>
         <option value='yellow'>yellow</option>
       </select>
-      <button @click="startGame" v-if="isGameStarted === false">start game</button>
+      <button class="button" @click="startGame" v-if="!isGameStarted">start game</button>
       <div class="game__square">
         <div
-          v-on:click="() => greet(item)"
+          v-on:click="() => onClick(item)"
           class="game__cell"
           v-for="item in this.arr"
           :key="item.i"
           v-bind:style="style(item)"
         >{{ item.name }}</div>
-        
       </div>
-      <h1 v-if="this.isWon && !this.isDrow">player {{winner}} won!</h1>
-      <h1 v-if="this.isDrow"> DROW </h1>
+      <h1 v-if="this.winner && !this.isDrow">player {{winner}} won!</h1>
+      <h1 v-if="this.isDrow && !this.winner"> DROW </h1>
       <button @click="reloadPage">reload game</button>
-       
   </div>
 </template>
 
@@ -28,13 +26,24 @@
 export default {
   name: 'App',
   data() {
+    const rand =  Math.floor(Math.random() * (2));
     return {
       isGameStarted: false,
       selected: '',
-      count: 1,
-      arr:   [{name:null,i:0},{name:null,i:1},{name:null,i:2},{name:null,i:3},{name:null,i:4},{name:null,i:5},{name:null,i:6},{name:null,i:7},{name:null,i:8}],
-      pleyer: Boolean(this.count),
-      isWon: false,
+      playerMove: rand,
+      firstMoveChance: rand,
+      arr:   
+      [
+        {name:null,i:0},
+        {name:null,i:1},
+        {name:null,i:2},
+        {name:null,i:3},
+        {name:null,i:4},
+        {name:null,i:5},
+        {name:null,i:6},
+        {name:null,i:7},
+        {name:null,i:8}
+      ],
       winner: '',
       isDrow: false
     }
@@ -44,120 +53,81 @@ export default {
       if (!item.name) {
         return '';
       }
-      console.log(this.selected)
-      if (this.count % 2 === 0) 
-      // ходимо перші
+      const otherColor = this.selected === 'red' ? 'yellow' : 'red';
+      if (this.firstMoveChance % 2 === 0) 
       {
-        if(this.selected === 'red') {
-          return (item.name === 'X' ? { background: 'red' } : { background: 'yellow' })
-        }
-        if(this.selected === 'yellow') {
-          return (item.name === 'X' ? { background: 'yellow' } : { background: 'red' })
-        }
-      }
-       if (this.count % 2 !== 0) // ходимо другі
-       {
-        if(this.selected === 'red') {
-            return (item.name === 'O' ? { background: 'red' } : { background: 'yellow' })
-          }
-        if(this.selected === 'yellow') {
-            return (item.name === 'O' ? { background: 'yellow' } : { background: 'red' })
-          }
+        return (item.name === 'X' ? { background: this.selected } : { background: otherColor })
+      } else {
+        return (item.name === 'O' ? { background: this.selected } : { background: otherColor })
       }
     },
     startGame() {
-      this.isGameStarted = true;
-      if(this.count === 1) {
-        this.arr[Math.floor(Math.random() *8)].name = 'X'
-      } /// WTF?
-    },
-    greet(item) {
-      if (item.name || this.isWon) {
-        return
+      if (!this.selected) {
+         alert('YOU NEED TO CHOOSE A COLOR')
+        return;
       }
-      // if(!this.selected) {
-      //   alert('YOU NEED TO CHOOSE A COLOR')
-      //   return;
-      // }
-      // if(!this.isGameStarted) {
-      //   alert('YOU NEED TO PRESS A BUTTON "START GAME"')
-      //   return;
-      // }
-      // if(!this.isGameStarted && !this.selected) {
-      //   alert('YOU NEED TO PRESS A BUTTON "START GAME" AND YOU NEED TO CHOOSE A COLOR')
-      //   return;
-      // }
-        console.log(this.count)
-        item.name = (this.count % 2 === 0) ? 'X' : 'O';
-        this.count++
-        let r = this.arr.filter(w => !w.name)[Math.floor(Math.random() * this.arr.filter(h=>!h.name).length)] 
-        this.arr[r.i].name = (this.count % 2 === 0) ? 'X' : 'O';
-        this.count++
-        if(this.selected)
+      this.isGameStarted = true;
+      if(this.firstMoveChance === 1) {
+        this.arr[Math.floor(Math.random() *8)].name = 'X'
+      }
+    },
+    onClick(item) {
+      if (item.name || this.winner) {
+        return;
+      }
+      if(!this.selected) {
+        alert('YOU NEED TO CHOOSE A COLOR')
+        return;
+      }
+      if(!this.isGameStarted) {
+        alert('YOU NEED TO PRESS A BUTTON "START GAME"')
+        return;
+      }
+        item.name = (this.playerMove % 2 === 0) ? 'X' : 'O';
+        this.playerMove++
         this.winCheck()
-
-      // if(this.count % 2 !== 0) {
-      //   console.log(this.player)
-      //   console.log(this.count)
-      //   let r = this.arr.filter(w => !w.name)[Math.floor(Math.random() * this.arr.filter(h=>!h.name).length)] 
-      //   this.arr[r.i].name = (this.count % 2 === 0) ? 'X' : 'O';
-      //   this.count++
-      //   item.name = (this.count % 2 === 0) ? 'X' : 'O';
-      //   this.count++
-      //   if(this.selected)
-      //   this.winner()
-      // }
-
+        if (!this.winner) {
+          const randomSortedArray = this.arr.filter(item => !item.name)[Math.floor(Math.random() * this.arr.filter(element=>!element.name).length)] 
+          this.arr[randomSortedArray.i].name = (this.playerMove % 2 === 0) ? 'X' : 'O';
+          this.playerMove++
+          if(this.selected)
+          this.winCheck()
+        }
     },
     winCheck() {
-      // if (this.arr[0].name && this.arr[1].name && this.arr[2].name || this.arr[3].name && this.arr[4].name && this.arr[5].name) {
-      //     this.isWon = true
-      //     // window.location.reload();
-      //     // alert('player win')
-      // }
+      const winningСombination = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      for (let i = 0; i < winningСombination.length; i++) {
+        const [a, b, c] = winningСombination[i];
 
-      // if (this.arr.slice(0, 3).every(win => win.name === 'X') || this.arr.slice(3, 6).every(win => win.name === 'X') || this.arr.slice(6, 9).every(win => win.name === 'X') 
-      // || this.arr[0].name === 'X' && this.arr[3].name === 'X' && this.arr[6].name === 'X' || this.arr[1].name === 'X' && this.arr[4].name === 'X' && this.arr[7].name === 'X' || this.arr[2].name === 'X' && this.arr[5].name === 'X' && this.arr[8].name === 'X' 
-      // || this.arr[0].name === 'X' && this.arr[4].name === 'X' && this.arr[8].name === 'X' || this.arr[2].name === 'X' && this.arr[4].name === 'X' && this.arr[6].name === 'X') {
-      //   this.isWon = true;
-      //   this.winner = 'X';
-      // }
-      // if (this.arr.slice(0, 3).every(win => win.name === 'O') || this.arr.slice(3, 6).every(win => win.name === 'O') || this.arr.slice(6, 9).every(win => win.name === 'O') 
-      // || this.arr[0].name === 'O' && this.arr[3].name === 'O' && this.arr[6].name === 'O' || this.arr[1].name === 'O' && this.arr[4].name === 'O' && this.arr[7].name === 'O' || this.arr[2].name === 'O' && this.arr[5].name === 'O' && this.arr[8].name === 'O' 
-      // || this.arr[0].name === 'O' && this.arr[4].name === 'O' && this.arr[8].name === 'O' || this.arr[2].name === 'O' && this.arr[4].name === 'O' && this.arr[6].name === 'O') {
-      //   this.isWon = true;
-      //   this.winner = 'O';
-      // }
-    
-    const winningСombination = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    
-    for (let i = 0; i < winningСombination.length; i++) {
-      const [a, b, c] = winningСombination[i];
-      if (this.arr[a].name && this.arr[a].name === this.arr[b].name && this.arr[a].name === this.arr[c].name) {
-        this.winner = this.arr[a].name;
-        this.isWon = true;
-      } else if (this.arr.every(player => player.name)){
-        this.isDrow = true
+        const isWin = this.arr[a].name === this.arr[b].name && this.arr[a].name === this.arr[c].name;
+
+        if (this.arr[a].name && isWin) {
+          this.winner = this.arr[a].name;
+          return;
+        }
       }
-    }
+      if (this.arr.every(player => player.name)) {
+        this.isDrow = true;
+        return;
+      }
     },
     reloadPage() {
       window.location.reload();
     },
     firstMove () {
-      if(this.count % 2 !== 0) {
-        let r = this.arr.filter(w => !w.name)[Math.floor(Math.random() * this.arr.filter(h=>!h.name).length)] 
-        this.arr[r.i].name = (this.count % 2 === 0) ? 'O' : 'X';
-        this.count++
+      if(this.f % 2 !== 0) {
+        const randomSortedArray = this.arr.filter(item => !item.name)[Math.floor(Math.random() * this.arr.filter(element=>!element.name).length)] 
+        this.arr[randomSortedArray.i].name = (this.rand % 2 === 0) ? 'O' : 'X';
+        this.f++
       }
     }
   }
@@ -166,23 +136,42 @@ export default {
 </script>
 
 <style>
-#app {
+.app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 160px;
+  /* position: relative; */
 }
 .game__square {
   height: 300px;
   width: 300px;
   border: 1px solid black;
-  margin: 50px auto;
+  margin: 100px auto;
   font-size: 110px;
   text-align: center;
   line-height: 100px;
   font-family: 'Indie Flower', sans-serif;
+}
+.select {
+  display: block;
+  left: calc(50% - 70px);
+  margin-bottom: 20px;
+  position: absolute;
+  top: 50px;
+  box-sizing: border-box;
+  width: 140px;
+}
+.button {
+  display: block;
+  left: calc(50% - 70px);
+  margin-bottom: 20px;
+  position: absolute;
+  top: 90px;
+  box-sizing: border-box;
+  width: 140px;
 }
 .red{
   background: red;
